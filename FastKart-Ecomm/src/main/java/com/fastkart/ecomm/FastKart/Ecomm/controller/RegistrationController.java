@@ -1,6 +1,6 @@
 package com.fastkart.ecomm.FastKart.Ecomm.controller;
 
-import com.fastkart.ecomm.FastKart.Ecomm.dto.AuthenticationRequest;
+
 import com.fastkart.ecomm.FastKart.Ecomm.dto.AuthenticationResponse;
 import com.fastkart.ecomm.FastKart.Ecomm.dto.RegisterRequest;
 import com.fastkart.ecomm.FastKart.Ecomm.service.AuthenticationService;
@@ -15,13 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
-public class AuthenticationController {
-    private final AuthenticationService authenticationService;
-
-    @PostMapping("/authenticate")
+public class RegistrationController {
+    private final RegisterService registerService;
+    @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(
-            @RequestBody AuthenticationRequest request
+            @RequestBody RegisterRequest request
     ){
-        return ResponseEntity.ok(authenticationService.authenticate(request));
+        return ResponseEntity.ok(registerService.register(request));
     }
 }
