@@ -46,7 +46,7 @@ public class RegisterServiceImpl implements RegisterService{
 
         Optional<User> userDb = userRepository.findByEmail(registerRequest.getEmail());
         if(userDb.isPresent()){
-            throw new UnableToRegisterException("User already exist");
+            throw new UnableToRegisterException("User already exists");
         }
         userRepository.save(user);
         return "User has been registered successfully!";
