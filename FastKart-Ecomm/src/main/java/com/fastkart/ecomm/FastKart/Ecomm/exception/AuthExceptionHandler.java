@@ -23,7 +23,8 @@ public class AuthExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler ResponseEntity<LoginErrorResponse> handleException(UnableToLoginException exc){
+    @ExceptionHandler
+    ResponseEntity<LoginErrorResponse> handleException(UnableToLoginException exc){
         var errorResponse = LoginErrorResponse
                 .builder()
                 .status(HttpStatus.UNAUTHORIZED.value())

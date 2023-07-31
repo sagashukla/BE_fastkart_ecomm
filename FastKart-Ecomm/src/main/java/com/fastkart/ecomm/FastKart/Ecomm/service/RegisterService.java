@@ -6,5 +6,5 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface RegisterService {
-    public AuthenticationResponse register(RegisterRequest registerRequest);
+    public String register(RegisterRequest registerRequest);
 }

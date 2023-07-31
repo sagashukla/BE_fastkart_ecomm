@@ -6,5 +6,5 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface AuthenticationService {
-    public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest);
+    public String authenticate(AuthenticationRequest authenticationRequest);
 }

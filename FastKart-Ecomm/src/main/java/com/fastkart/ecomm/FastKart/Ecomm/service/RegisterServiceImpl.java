@@ -1,23 +1,28 @@
 package com.fastkart.ecomm.FastKart.Ecomm.service;
 
+import com.fastkart.ecomm.FastKart.Ecomm.common.Utils;
 import com.fastkart.ecomm.FastKart.Ecomm.config.JwtService;
-import com.fastkart.ecomm.FastKart.Ecomm.config.enums.RoleType;
-import com.fastkart.ecomm.FastKart.Ecomm.dto.AuthenticationResponse;
+import com.fastkart.ecomm.FastKart.Ecomm.enums.RoleType;
 import com.fastkart.ecomm.FastKart.Ecomm.dto.RegisterRequest;
 import com.fastkart.ecomm.FastKart.Ecomm.entity.Role;
 import com.fastkart.ecomm.FastKart.Ecomm.entity.User;
 import com.fastkart.ecomm.FastKart.Ecomm.exception.UnableToRegisterException;
 import com.fastkart.ecomm.FastKart.Ecomm.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class RegisterServiceImpl implements RegisterService{
 
+    @Autowired
     private UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-
-    private final JwtService jwtService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private JwtService jwtService;
 
     public RegisterServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
         this.userRepository = userRepository;
@@ -26,12 +31,12 @@ public class RegisterServiceImpl implements RegisterService{
     }
 
     @Override
-    public AuthenticationResponse register(RegisterRequest registerRequest) {
+    public String register(RegisterRequest registerRequest) {
         validateRequest(registerRequest);
-        var role = Role.builder()
+        Role role = Role.builder()
                 .roleType(registerRequest.getRoleType())
                 .build();
-        var user = User.builder()
+        User user = User.builder()
                 .firstName(registerRequest.getFirstName())
                 .lastName(registerRequest.getLastName())
                 .email(registerRequest.getEmail())
@@ -39,29 +44,32 @@ public class RegisterServiceImpl implements RegisterService{
                 .role(role)
                 .build();
 
+        Optional<User> userDb = userRepository.findByEmail(registerRequest.getEmail());
+        if(userDb.isPresent()){
+            throw new UnableToRegisterException("User already exist");
+        }
         userRepository.save(user);
-        var jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder().token(jwtToken).build();
+        return "User has been registered successfully!";
     }
 
     private void validateRequest(RegisterRequest request) {
-        if(request.getEmail() == null){
-            throw new UnableToRegisterException("Email cannot be null");
+        if(Utils.validateString(request.getEmail())){
+            throw new UnableToRegisterException("Email cannot be null or empty");
         }
-        else if(request.getPassword() == null){
-            throw new UnableToRegisterException("Password cannot be null");
+        else if(Utils.validateString(request.getPassword())){
+            throw new UnableToRegisterException("Password cannot be null or empty");
         }
-        else if(request.getPassword().length() < 5){
+        else if(Utils.validatePassword(request.getPassword())){
             throw new UnableToRegisterException("Password should have at least 6 characters");
         }
-        else if(request.getFirstName() == null){
-            throw new UnableToRegisterException("First name cannot be null");
+        else if(Utils.validateString(request.getFirstName())){
+            throw new UnableToRegisterException("First name cannot be null or empty");
         }
-        else if(request.getLastName() == null){
-            throw new UnableToRegisterException("Last name cannot be null");
+        else if(Utils.validateString(request.getLastName())){
+            throw new UnableToRegisterException("Last name cannot be null or empty");
         }
-        else if(request.getRoleType() == null){
-            throw new UnableToRegisterException("Role cannot be null");
+        else if(Utils.validateString(request.getRoleType())){
+            throw new UnableToRegisterException("Role cannot be null or empty");
         }
         else if(!(request.getRoleType().equals(RoleType.SELLER.toString()) || request.getRoleType().equals(RoleType.BUYER.toString()))) {
             throw new UnableToRegisterException("Role type can either be SELLER or BUYER");
