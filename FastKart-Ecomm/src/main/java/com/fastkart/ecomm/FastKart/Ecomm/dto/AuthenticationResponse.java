@@ -11,6 +11,5 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AuthenticationResponse {
-    private HttpStatus statusCode;
     private String token;
 }

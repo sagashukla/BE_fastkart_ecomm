@@ -33,7 +33,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
     }
 
     @Override
-    public String authenticate(AuthenticationRequest authenticationRequest) {
+    public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
         validateRequest(authenticationRequest);
 
         Optional<User> user = userRepository.findByEmail(authenticationRequest.getEmail());
@@ -50,7 +50,11 @@ public class AuthenticationServiceImpl implements AuthenticationService{
 //                    )
 //            );
             var jwtToken = jwtService.generateToken(user.get());
-            return jwtToken;
+            AuthenticationResponse authenticationResponse = AuthenticationResponse
+                    .builder()
+                    .token(jwtToken)
+                    .build();
+            return authenticationResponse;
         }
     }
 
