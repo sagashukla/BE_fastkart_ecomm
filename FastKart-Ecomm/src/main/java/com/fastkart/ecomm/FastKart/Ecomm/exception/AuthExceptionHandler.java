@@ -1,5 +1,6 @@
 package com.fastkart.ecomm.FastKart.Ecomm.exception;
 
+import com.fastkart.ecomm.FastKart.Ecomm.dto.GenericErrorResponse;
 import com.fastkart.ecomm.FastKart.Ecomm.dto.LoginErrorResponse;
 import com.fastkart.ecomm.FastKart.Ecomm.dto.RegistrationErrorResponse;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,18 @@ public class AuthExceptionHandler {
     @ExceptionHandler
     ResponseEntity<LoginErrorResponse> handleException(UnableToLoginException exc){
         var errorResponse = LoginErrorResponse
+                .builder()
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .message(exc.getMessage())
+                .timeStamp(System.currentTimeMillis())
+                .build();
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler
+    ResponseEntity<GenericErrorResponse> handleException(InvalidJwtTokenException exc){
+        var errorResponse = GenericErrorResponse
                 .builder()
                 .status(HttpStatus.UNAUTHORIZED.value())
                 .message(exc.getMessage())

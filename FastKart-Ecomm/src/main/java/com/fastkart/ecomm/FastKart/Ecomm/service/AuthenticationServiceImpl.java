@@ -14,6 +14,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -34,6 +36,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
 
     @Override
     public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
+        Map<String, String> clamis = new HashMap<>();
         validateRequest(authenticationRequest);
 
         Optional<User> user = userRepository.findByEmail(authenticationRequest.getEmail());
@@ -43,13 +46,9 @@ public class AuthenticationServiceImpl implements AuthenticationService{
         }
         else {
             validatePassword(user.get().getPassword(), authenticationRequest.getPassword());
-//            authenticationManager.authenticate(
-//                    new UsernamePasswordAuthenticationToken(
-//                            authenticationRequest.getEmail(),
-//                            authenticationRequest.getPassword()
-//                    )
-//            );
-            var jwtToken = jwtService.generateToken(user.get());
+            User userDb = user.get();
+            clamis.put("role", userDb.getRole().getRoleType());
+            var jwtToken = jwtService.generateToken(clamis, user.get());
             AuthenticationResponse authenticationResponse = AuthenticationResponse
                     .builder()
                     .token(jwtToken)

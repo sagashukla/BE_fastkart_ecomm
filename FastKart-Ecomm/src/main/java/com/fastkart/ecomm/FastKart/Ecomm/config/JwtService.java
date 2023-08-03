@@ -1,5 +1,7 @@
 package com.fastkart.ecomm.FastKart.Ecomm.config;
 
+import com.fastkart.ecomm.FastKart.Ecomm.dto.GenericErrorResponse;
+import com.fastkart.ecomm.FastKart.Ecomm.exception.InvalidJwtTokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -29,7 +31,7 @@ public class JwtService {
         return generateToken(new HashMap<>(), userDetails);
     }
 
-    public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails){
+    public String generateToken(Map<String, String> extraClaims, UserDetails userDetails){
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
@@ -60,12 +62,28 @@ public class JwtService {
     }
 
     private Claims extratAllClaims(String token){
+        try{
+            Claims claims = Jwts
+                    .parserBuilder()
+                    .setSigningKey(getSignInKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        }
+        catch (Exception err){
+            throw new InvalidJwtTokenException("Invalid token provided");
+        }
         return Jwts
                 .parserBuilder()
                 .setSigningKey(getSignInKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+    public String extractClaim(String key, String token){
+        Claims claims = extratAllClaims(token);
+        return claims.get(key, String.class);
     }
 
     private Key getSignInKey() {
