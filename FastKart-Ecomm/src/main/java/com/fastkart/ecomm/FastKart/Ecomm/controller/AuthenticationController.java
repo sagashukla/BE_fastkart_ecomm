@@ -22,9 +22,6 @@ public class AuthenticationController {
     @Autowired
     private AuthenticationService authenticationService;
 
-    @Autowired
-    private JwtService jwtService;
-
     @CrossOrigin
     @PostMapping
     public ResponseEntity<AuthenticationResponse> authenticate(
@@ -36,7 +33,6 @@ public class AuthenticationController {
 
     @GetMapping("/validatetoken")
     public ResponseEntity<TokenValidationResponse> validateToken(HttpServletRequest request){
-        System.out.println("Inside validateToken");
         String email = (String) request.getAttribute("email");
         String role = (String) request.getAttribute("role");
 
