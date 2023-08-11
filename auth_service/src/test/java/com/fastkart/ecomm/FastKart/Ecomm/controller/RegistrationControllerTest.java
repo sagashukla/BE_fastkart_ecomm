@@ -27,7 +27,7 @@ class RegistrationControllerTest {
                 .lastName("last")
                 .email("test@email.com")
                 .password("test123")
-                .roleType("SELLER")
+                .roleId(1)
                 .build();
 
         when(registerService.register(request)).thenReturn("User has been registered successfully!");

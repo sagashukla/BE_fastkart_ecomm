@@ -51,7 +51,7 @@ class RegisterServiceImplTest {
                 .lastName(user.getLastName())
                 .email(user.getEmail())
                 .password(user.getPassword())
-                .roleType(role.getRoleType())
+                .roleId(1)
                 .build();
         when(userRepository.save(user)).thenReturn(user);
         assertNotNull(registerService.register(request));
@@ -81,7 +81,7 @@ class RegisterServiceImplTest {
                 .lastName(user.getLastName())
                 .email(user.getEmail())
                 .password(user.getPassword())
-                .roleType(role.getRoleType())
+                .roleId(1)
                 .build();
 
         when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
@@ -114,7 +114,7 @@ class RegisterServiceImplTest {
                 .lastName(user.getLastName())
                 .email(user.getEmail())
                 .password(user.getPassword())
-                .roleType(role.getRoleType())
+                .roleId(1)
                 .build();
 
         when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
@@ -147,7 +147,7 @@ class RegisterServiceImplTest {
                 .lastName(user.getLastName())
                 .email(user.getEmail())
                 .password(user.getPassword())
-                .roleType(role.getRoleType())
+                .roleId(1)
                 .build();
 
         when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
@@ -180,7 +180,7 @@ class RegisterServiceImplTest {
                 .lastName(user.getLastName())
                 .email(user.getEmail())
                 .password(user.getPassword())
-                .roleType(role.getRoleType())
+                .roleId(1)
                 .build();
 
         when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
@@ -213,7 +213,7 @@ class RegisterServiceImplTest {
                 .lastName(user.getLastName())
                 .email(user.getEmail())
                 .password(user.getPassword())
-                .roleType(role.getRoleType())
+                .roleId(1)
                 .build();
 
         when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
@@ -246,46 +246,13 @@ class RegisterServiceImplTest {
                 .lastName(user.getLastName())
                 .email(user.getEmail())
                 .password("test")
-                .roleType(role.getRoleType())
+                .roleId(1)
                 .build();
 
         when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
 
         Throwable exception = assertThrows(UnableToRegisterException.class, () -> registerService.register(request));
         assertEquals("Password should have at least 6 characters", exception.getMessage());
-    }
-
-    @Test
-    void verifyInValidRegistrationUserRoleTypeNotProvided_Test(){
-        Role role = Role
-                .builder()
-                .roleId(1)
-                .roleType("BUYER")
-                .build();
-
-        User user = User
-                .builder()
-                .firstName("Sagar")
-                .lastName("Shukla")
-                .email("sagar@gmail.com")
-                .password(new BCryptPasswordEncoder().encode("test123"))
-                .role(role)
-                .id(1)
-                .build();
-
-        RegisterRequest request = RegisterRequest
-                .builder()
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .email(user.getEmail())
-                .password(user.getPassword())
-                .roleType(null)
-                .build();
-
-        when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
-
-        Throwable exception = assertThrows(UnableToRegisterException.class, () -> registerService.register(request));
-        assertEquals("Role cannot be null or empty", exception.getMessage());
     }
 
     @Test
@@ -312,12 +279,13 @@ class RegisterServiceImplTest {
                 .lastName(user.getLastName())
                 .email(user.getEmail())
                 .password(user.getPassword())
-                .roleType(role.getRoleType())
+                .roleId(3)
                 .build();
 
+        System.out.println("here "+ request.getRoleId());
         when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
 
         Throwable exception = assertThrows(UnableToRegisterException.class, () -> registerService.register(request));
-        assertEquals("Role type can either be SELLER or BUYER", exception.getMessage());
+        assertEquals("Role type can either be 1(SELLER) or 2(BUYER)", exception.getMessage());
     }
 }
