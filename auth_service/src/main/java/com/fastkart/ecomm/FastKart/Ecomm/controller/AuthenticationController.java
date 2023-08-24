@@ -40,7 +40,6 @@ public class AuthenticationController {
     @GetMapping("/validatetoken")
     public ResponseEntity<TokenValidationResponse> validateToken(HttpServletRequest request){
         log.info("Inside authentication controller");
-        log.info("Request: {}", request);
         String email = (String) request.getAttribute("email");
         String role = (String) request.getAttribute("role");
 

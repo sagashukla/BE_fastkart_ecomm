@@ -22,19 +22,10 @@ import java.util.Optional;
 @Service
 @Slf4j
 public class AuthenticationServiceImpl implements AuthenticationService{
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
     @Autowired
     private UserRepository userRepository;
     @Autowired
     private JwtService jwtService;
-
-    public AuthenticationServiceImpl(AuthenticationManager authenticationManager, UserRepository userRepository, JwtService jwtService) {
-        this.authenticationManager = authenticationManager;
-        this.userRepository = userRepository;
-        this.jwtService = jwtService;
-    }
 
     @Override
     public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
@@ -44,6 +35,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
         validateRequest(authenticationRequest);
 
         Optional<User> user = userRepository.findByEmail(authenticationRequest.getEmail());
+        log.info("User fetched {}", user.get());
 
         if(user.isEmpty()){
             log.info("Invalid credentials");
@@ -52,7 +44,6 @@ public class AuthenticationServiceImpl implements AuthenticationService{
         else {
             validatePassword(user.get().getPassword(), authenticationRequest.getPassword());
             User userDb = user.get();
-            log.info("Fetched user: {}", userDb);
             clamis.put("role", userDb.getRole().getRoleType());
             var jwtToken = jwtService.generateToken(clamis, user.get());
             AuthenticationResponse authenticationResponse = AuthenticationResponse

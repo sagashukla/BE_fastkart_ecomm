@@ -1,6 +1,7 @@
 package com.fastkart.ecomm.FastKart.Ecomm.config;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,16 +15,16 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfiguration {
+@Slf4j
+public class SecurityConfiguration{
 
     @Autowired
     private JwtAuthenticationFilter jwtAuthfiler;
 
-    @Autowired
-    private AuthenticationProvider authenticationProvider;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        System.out.println("Inside securityFilterChain");
+        log.info("Inside SecurityConfiguration");
+        log.info("Inside securityFilterChain()");
         http
                 .csrf()
                 .disable()
@@ -36,10 +37,7 @@ public class SecurityConfiguration {
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthfiler, UsernamePasswordAuthenticationFilter.class);
-
-
         return http.build();
     }
 }
